@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Diamond Hunter</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Add meta tags for developer and game -->
+    <meta name="author" content="Sk. Farhad Kamal">
+    <meta name="description" content="Senior Software Engineer">
+    <meta name="keywords" content="game, Diamond Hunter">
+
+    <!-- Include CSS-->
+    <link rel="stylesheet" type="text/css" href="assets/css/board.css">
+
+    <!-- Include jQuery-->
+    <script src="assets/js/jquery-3.7.1.js"></script>
+</head>
+<body>
+    <button id="reloadButton">Restart Game</button>
+    <div id="game-container">
+        <div id="lifeCount">
+            <!-- Display initial 5 life using heart icons -->
+            <img src="assets/img/heart.png" alt="Heart" class="heart-icon">
+            <img src="assets/img/heart.png" alt="Heart" class="heart-icon">
+            <img src="assets/img/heart.png" alt="Heart" class="heart-icon">
+            <img src="assets/img/heart.png" alt="Heart" class="heart-icon">
+            <img src="assets/img/heart.png" alt="Heart" class="heart-icon">
+        </div>
+        <div id="result">Find out five Diamonds!</div>
+        <div class="board-container">
+            <div class="direction-label north">North</div>
+            <table>
+                <tbody>
+                    <script>
+                        var cellCounter = 1;
+                        for (var row = 1; row <= 8; row++) {
+                            document.write("<tr>");
+                            for (var col = 1; col <= 8; col++) {
+                                document.write("<td id='cell" + cellCounter + "'></td>");
+                                cellCounter++;
+                            }
+                            document.write("</tr>");
+                        }
+                    </script>
+                </tbody>
+            </table>
+            <div class="direction-label south">South</div>
+        </div>
+        <div class="direction-label west">West</div>
+        <div class="direction-label east">East</div>
+    </div>
+    <button id="hint1">Hint 1</button>
+    <button id="hint2">Hint 2</button>
+    <button id="hint3">Hint 3</button>
+    <button id="hint4">Hint 4</button>
+    <button id="hint5">Hint 5</button>
+    <button id="snake">Snake!</button>
+    <script>
+        // jQuery code
+        $(document).ready(function() {
+            var pickedNumbers = [];
+            var diamondCount = 0;
+            var skullCount = 0;
+            var lifeCount = 5; // Initial life count
+            var clickedCells = {}; // Keep track of clicked cells
+
+            while (pickedNumbers.length < 16) {
+                var randomNumber = Math.floor(Math.random() * 64); // Random number between 0 and 63
+
+                // Check if the random number is not already picked
+                if (pickedNumbers.indexOf(randomNumber) === -1) {
+                    pickedNumbers.push(randomNumber);
+                }
+            }
+
+            // Function to update the life count display
+            function updateLifeCount() {
+                $("#lifeCount").empty();
+                for (var i = 0; i < lifeCount; i++) {
+                    // Display life using heart icons
+                    $("#lifeCount").append('<img src="assets/img/heart.png" alt="Heart" class="heart-icon">');
+                }
+            }
+
+            function checkValueInArray(array, value) {
+                return $.inArray(value, array) !== -1;
+            }
+
+            // JavaScript code to handle the reload button click event
+            $("#reloadButton").click(function() {
+                location.reload(); // Reload the page
+            });
+
+            // JavaScript code to handle cell click event
+            $("td").click(function() {
+                if (diamondCount >= 5 || skullCount >= 5) {
+                    return; // Game already over, do nothing
+                }
+
+                // Alert the cell ID value
+                var cellId = $(this).attr("id");
+                var numericPart = cellId.match(/\d+/); // Extract numeric part using regex
+
+                // Check if the cell has already been clicked
+                if (clickedCells[cellId]) {
+                    return; // Cell already clicked, do nothing
+                }
+
+                // Mark the cell as clicked
+                clickedCells[cellId] = true;
+
+                // Diamond Found
+                if (checkValueInArray(pickedNumbers, numericPart - 1)) {
+                    $(this).css("background-color", "black");
+                    $(this).css("background-image", "url('assets/img/diamond.png')");
+                    diamondCount++;
+
+                    if (diamondCount === 5) {
+                        $("#result").text("Congratulations, you found five diamonds!");
+                    } else {
+                        $("#result").text("Diamonds found: " + diamondCount.toString());
+                    }
+
+                    // Update the result message in the #result div
+
+                }
+                // Skull Found
+                else {
+                    $(this).css("background-color", "red");
+                    $(this).css("background-image", "url('assets/img/skull.png')");
+                    skullCount++;
+
+                    // Deduct a life
+                    lifeCount--;
+                    updateLifeCount(); // Update the life count display
+
+                    if (skullCount === 5) {
+                        $("#result").text("Game Over");
+                        // Disable further cell clicks
+                        $("td").off("click");
+                    }
+                }
+            });
+
+            // Function to count diamonds in a specific area
+            function countDiamondsInArea(startRow, endRow, startCol, endCol) {
+                var diamondCount = 0;
+                for (var row = startRow; row <= endRow; row++) {
+                    for (var col = startCol; col <= endCol; col++) {
+                        var cellId = "cell" + ((row - 1) * 8 + col);
+                        if (checkValueInArray(pickedNumbers, parseInt(cellId.match(/\d+/)[0]) - 1)) {
+                            diamondCount++;
+                        }
+                    }
+                }
+                return diamondCount;
+            }
+
+            // Hint 1 Button Click
+            $("#hint1").click(function() {
+                var hintCount = countDiamondsInArea(1, 4, 1, 4);
+                $("#result").text("Hint 1: There are " + hintCount + " diamonds in the North-West position.");
+            });
+
+            // Hint 2 Button Click
+            $("#hint2").click(function() {
+                var hintCount = countDiamondsInArea(1, 4, 5, 8);
+                $("#result").text("Hint 2: There are " + hintCount + " diamonds in the North-East position.");
+            });
+
+            // Hint 3 Button Click
+            $("#hint3").click(function() {           
+                var hintCount = countDiamondsInArea(5, 8, 5, 8);
+                $("#result").text("Hint 3: There are " + hintCount + " diamonds in the South-East position.");
+            });
+
+            // Hint 4 Button Click
+            $("#hint4").click(function() {
+                var hintCount = countDiamondsInArea(5, 8, 1, 4);
+                $("#result").text("Hint 4: There are " + hintCount + " diamonds in the South-West position.");
+            });
+
+            // Hint 5 Button Click (Middle)
+            $("#hint5").click(function() {
+                var hintCount = countDiamondsInArea(3, 6, 3, 6);
+                $("#result").text("Hint 5: There are " + hintCount + " diamonds in the Middle position.");
+            });
+
+            // Cheat Code (Shift + Ctrl) to reveal all diamonds
+            $(document).keydown(function(event) {
+                if (event.shiftKey && event.ctrlKey) {
+                    $("td").each(function() {
+                        var cellId = $(this).attr("id");
+                        var numericPart = parseInt(cellId.match(/\d+/)[0]) - 1;
+                        if (checkValueInArray(pickedNumbers, numericPart)) {
+                            $(this).css("background-color", "black");
+                            $(this).css("background-image", "url('assets/img/diamond.png')");
+                        }
+                    });
+                }
+            });
+
+
+            //
+
+            // JavaScript code to handle the "Snake" hint button click event
+            $("#snake").click(function() {
+                var snakePath = findSnakePath();
+                drawSnake(snakePath);
+            });
+
+            // Function to find a path to connect all diamonds while touching boundaries
+            function findSnakePath() {
+                // Create an array to store the positions of all diamonds
+                var diamondPositions = [];
+
+                for (var i = 0; i < pickedNumbers.length; i++) {
+                    var diamondIndex = pickedNumbers[i];
+                    var x = (diamondIndex % 8) + 1;
+                    var y = Math.floor(diamondIndex / 8) + 1;
+                    diamondPositions.push({ x: x, y: y });
+                }
+
+                // Create an array to store the snake path
+                var snakePath = [];
+
+                // Define starting position (you can modify this if needed)
+                var startX = 1;
+                var startY = 1;
+
+                var currentX = startX;
+                var currentY = startY;
+
+                // Use BFS to find the shortest path to connect all diamonds
+                while (diamondPositions.length > 0) {
+                    var nearestDiamond = findNearestDiamond(currentX, currentY, diamondPositions);
+
+                    if (!nearestDiamond) {
+                        // No path found, break the loop
+                        break;
+                    }
+
+                    var pathToDiamond = findPath(currentX, currentY, nearestDiamond.x, nearestDiamond.y);
+
+                    if (!pathToDiamond) {
+                        // No path found, break the loop
+                        break;
+                    }
+
+                    snakePath = snakePath.concat(pathToDiamond);
+                    currentX = nearestDiamond.x;
+                    currentY = nearestDiamond.y;
+                }
+
+                // Extend the path to touch the boundaries
+                var boundaryPath = extendPathToBoundaries(currentX, currentY);
+                snakePath = snakePath.concat(boundaryPath);
+
+                return snakePath;
+            }
+
+            // Function to extend the path to touch the boundaries
+            function extendPathToBoundaries(x, y) {
+                var path = [];
+
+                // Extend to the right boundary
+                for (var i = x; i <= 8; i++) {
+                    path.push({ x: i, y: y });
+                }
+
+                // Extend to the bottom boundary
+                for (var j = y + 1; j <= 8; j++) {
+                    path.push({ x: 8, y: j });
+                }
+
+                // Extend to the left boundary
+                for (var k = 8; k >= 1; k--) {
+                    path.push({ x: k, y: 8 });
+                }
+
+                // Extend to the top boundary
+                for (var m = 8; m >= 1; m--) {
+                    path.push({ x: 1, y: m });
+                }
+
+                return path;
+            }
+
+            // Function to find the nearest diamond from a given position
+            function findNearestDiamond(x, y, diamondPositions) {
+                var minDistance = Number.MAX_SAFE_INTEGER;
+                var nearestDiamond = null;
+
+                for (var i = 0; i < diamondPositions.length; i++) {
+                    var diamond = diamondPositions[i];
+                    var distance = Math.abs(x - diamond.x) + Math.abs(y - diamond.y);
+
+                    if (distance < minDistance) {
+                        minDistance = distance;
+                        nearestDiamond = diamond;
+                    }
+                }
+
+                if (nearestDiamond) {
+                    // Remove the found diamond from the list
+                    var index = diamondPositions.indexOf(nearestDiamond);
+                    if (index > -1) {
+                        diamondPositions.splice(index, 1);
+                    }
+                }
+
+                return nearestDiamond;
+            }
+
+            // Function to find a path from (startX, startY) to (endX, endY)
+            function findPath(startX, startY, endX, endY) {
+                var path = [];
+                var currentX = startX;
+                var currentY = startY;
+
+                while (currentX !== endX || currentY !== endY) {
+                    if (currentX < endX) {
+                        currentX++;
+                    } else if (currentX > endX) {
+                        currentX--;
+                    }
+
+                    if (currentY < endY) {
+                        currentY++;
+                    } else if (currentY > endY) {
+                        currentY--;
+                    }
+
+                    path.push({ x: currentX, y: currentY });
+                }
+
+                return path;
+            }
+
+            // Function to draw the snake on the map
+            function drawSnake(snakePath) {
+                if (snakePath.length === 0) {
+                    $("#result").text("No snake path found.");
+                    return;
+                }
+
+                // Clear any previous snake paths
+                $("td").css("background-color", "");
+
+                // Draw the snake by setting the background color of the cells to yellow
+                for (var i = 0; i < snakePath.length; i++) {
+                    var cellId = "cell" + ((snakePath[i].y - 1) * 8 + snakePath[i].x);
+                    $("#" + cellId).css("background-color", "yellow");
+                }
+
+                $("#result").text("Snake path drawn.");
+            }
+
+        });
+    </script>
+</body>
+</html>

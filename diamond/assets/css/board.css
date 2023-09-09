@@ -1,0 +1,99 @@
+/* Reset some default styles */
+body, div, h1, h2, h3, h4, h5, h6, p, table, td {
+    margin: 0;
+    padding: 0;
+    border: 0;
+}
+
+td:hover {
+    cursor: pointer;
+}
+
+#game-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+#lifeCount {
+    margin-bottom: 20px; /* Adjust the margin as needed */
+}
+
+/* Style the board container */
+.board-container {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+ 
+}
+
+/* Style the board */
+table {
+    border-collapse: collapse;
+    width: 320px;
+    height: 320px;
+   
+}
+
+td {
+    width: 40px;
+    height: 40px;
+    text-align: center;
+    border: 1px solid #000; /* Add a black border to each cell */
+}
+
+
+/* Style the direction labels */
+.direction-label {
+    font-size: 20px;
+    font-weight: bold;
+    margin: 10px;
+}
+
+.north, .south {
+    display: inline-block;
+}
+
+.west, .east {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.north {
+    margin-bottom: 10px;
+}
+
+.south {
+    margin-top: 10px;
+}
+
+/* Rotate the West and East labels */
+.west {
+    left: 0;
+    transform: translateY(-50%) rotate(-90deg); /* Rotate -90 degrees */
+    transform-origin: right center; /* Rotate from the right center */
+    white-space: nowrap; /* Prevent text wrapping */
+}
+
+.east {
+    right: 0;
+    transform: translateY(-50%) rotate(90deg); /* Rotate 90 degrees */
+    transform-origin: left center; /* Rotate from the left center */
+    white-space: nowrap; /* Prevent text wrapping */
+}
+
+
+#result {
+    font-size: 24px;
+    text-align: center;
+    margin-top: 20px;
+    padding: 10px;
+    background-color: #ffcc00;
+    color: #333;
+    border: 2px solid #333;
+    border-radius: 5px;
+}
