@@ -16,7 +16,7 @@ td:hover {
 }
 
 #lifeCount {
-    margin-bottom: 20px; /* Adjust the margin as needed */
+    margin-bottom: 20px;
 }
 
 /* Style the board container */
@@ -27,7 +27,6 @@ td:hover {
     align-items: center;
     justify-content: center;
     text-align: center;
- 
 }
 
 /* Style the board */
@@ -35,59 +34,48 @@ table {
     border-collapse: collapse;
     width: 320px;
     height: 320px;
-   
 }
 
 td {
     width: 40px;
     height: 40px;
     text-align: center;
-    border: 1px solid #000; /* Add a black border to each cell */
+    border: 1px solid #000;
 }
-
 
 /* Style the direction labels */
 .direction-label {
     font-size: 20px;
     font-weight: bold;
-    margin-right: 300px;
-    margin-left: 300px;
     margin-top: 10px;
+    text-align: center;
+ 
 }
 
 .north, .south {
     display: inline-block;
 }
 
+/* Rotate the West and East labels */
 .west, .east {
     position: absolute;
     top: 50%;
     transform: translateY(-50%);
+    white-space: nowrap;
 }
 
-.north {
-    margin-bottom: 10px;
-}
-
-.south {
-    margin-top: 10px;
-}
-
-/* Rotate the West and East labels */
 .west {
-    left: 0;
-    transform: translateY(-50%) rotate(-90deg); /* Rotate -90 degrees */
-    transform-origin: right center; /* Rotate from the right center */
-    white-space: nowrap; /* Prevent text wrapping */
+    margin-left: -400px;
+    transform: translateY(-50%) rotate(-90deg);
+    transform-origin: right center;
+ 
 }
 
 .east {
-    right: 0;
-    transform: translateY(-50%) rotate(90deg); /* Rotate 90 degrees */
-    transform-origin: left center; /* Rotate from the left center */
-    white-space: nowrap; /* Prevent text wrapping */
+    margin-right: -400px;
+    transform: translateY(-50%) rotate(90deg);
+    transform-origin: left center;
 }
-
 
 #result {
     font-size: 24px;
@@ -98,4 +86,35 @@ td {
     color: #333;
     border: 2px solid #333;
     border-radius: 5px;
+}
+
+/* Media Query for Mobile Devices */
+@media screen and (max-width: 768px) {
+    .direction-label {
+        font-size: 20px;
+        font-weight: bold;
+        margin-top: 10px;
+        text-align: center;
+    }
+    
+    .north, .south {
+        display: inline-block;
+        margin-top: 0;
+    }
+    
+    /* Rotate the West and East labels */
+    .west, .east {
+        text-align: center;
+        white-space: nowrap; /* Prevent text wrapping */
+    }
+    
+    .west {
+        margin-right: auto; /* Push it to the right */
+        transform: rotate(-90deg); /* Rotate -90 degrees */
+    }
+    
+    .east {
+        margin-left: auto; /* Push it to the left */
+        transform: rotate(90deg); /* Rotate 90 degrees */
+    }
 }
