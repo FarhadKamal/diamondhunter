@@ -34,4 +34,4 @@
 
 Have fun playing Diamond Hunter and challenge yourself to find all the diamonds while avoiding the skulls!
 
-![Diamond Hunter Screenshot](screenshot.png)
+![Diamond Hunter Screenshot](screen_shot.png)
